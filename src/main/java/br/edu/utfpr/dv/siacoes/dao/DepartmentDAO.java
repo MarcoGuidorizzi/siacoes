@@ -14,112 +14,92 @@ import br.edu.utfpr.dv.siacoes.model.Department;
 
 public class DepartmentDAO {
 
-	public Department findById(int id) throws SQLException{
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		
-		try{
-			conn = ConnectionDAO.getInstance().getConnection();
-			stmt = conn.prepareStatement(
-				"SELECT department.*, campus.name AS campusName " +
-				"FROM department INNER JOIN campus ON campus.idCampus=department.idCampus " +
-				"WHERE idDepartment = ?");
-		
-			stmt.setInt(1, id);
-			
-			rs = stmt.executeQuery();
-			
-			if(rs.next()){
-				return this.loadObject(rs);
-			}else{
-				return null;
-			}
-		}finally{
-			if((rs != null) && !rs.isClosed())
-				rs.close();
-			if((stmt != null) && !stmt.isClosed())
-				stmt.close();
-			if((conn != null) && !conn.isClosed())
-				conn.close();
-		}
-	}
-	
 	public List<Department> listAll(boolean onlyActive) throws SQLException{
-		Connection conn = null;
-		Statement stmt = null;
-		ResultSet rs = null;
-		
-		try{
-			conn = ConnectionDAO.getInstance().getConnection();
-			stmt = conn.createStatement();
-		
-			rs = stmt.executeQuery("SELECT department.*, campus.name AS campusName " +
-					"FROM department INNER JOIN campus ON campus.idCampus=department.idCampus " + 
-					(onlyActive ? " WHERE department.active=1" : "") + " ORDER BY department.name");
-			
+
+		// Utilizando o método de tryResourceClose para minimizar o código e garantir o fechamento das conexões
+        // Fonte: https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
+		String query = "SELECT department.*, campus.name AS campusName " +
+					"FROM department "+
+					"INNER JOIN campus ON campus.idCampus=department.idCampus " + 
+					(onlyActive ? " WHERE department.active=1" : "") + " ORDER BY department.name";
+		try (Connection conn = ConnectionDAO.getInstance().getConnection();
+				Statement stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery(query);) {
 			List<Department> list = new ArrayList<Department>();
-			
+
 			while(rs.next()){
-				list.add(this.loadObject(rs));
+					list.add(this.loadObject(rs));
 			}
 			
 			return list;
-		}finally{
-			if((rs != null) && !rs.isClosed())
-				rs.close();
-			if((stmt != null) && !stmt.isClosed())
-				stmt.close();
-			if((conn != null) && !conn.isClosed())
-				conn.close();
+		}
+	}
+
+	public Department findById(int id) throws SQLException{
+
+		// Utilizando o método de tryResourceClose para minimizar o código e garantir o fechamento das conexões
+        // Fonte: https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
+		String query = "SELECT department.*, campus.name AS campusName " +
+				"FROM department "+
+                "INNER JOIN campus ON campus.idCampus=department.idCampus " +
+				"WHERE idDepartment = ?";
+		try (Connection conn = ConnectionDAO.getInstance().getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query);) {
+				stmt.setInt(1, id);
+			
+				try(ResultSet rs = stmt.executeQuery();){
+					if(rs.next()){
+						return this.loadObject(rs);
+					}else{
+						return null;
+					}
+				}
+
 		}
 	}
 	
 	public List<Department> listByCampus(int idCampus, boolean onlyActive) throws SQLException{
-		Connection conn = null;
-		Statement stmt = null;
-		ResultSet rs = null;
 		
-		try{
-			conn = ConnectionDAO.getInstance().getConnection();
-			stmt = conn.createStatement();
-		
-			rs = stmt.executeQuery("SELECT department.*, campus.name AS campusName " +
-					"FROM department INNER JOIN campus ON campus.idCampus=department.idCampus " +
-					"WHERE department.idCampus=" + String.valueOf(idCampus) + (onlyActive ? " AND department.active=1" : "") + " ORDER BY department.name");
-			
-			List<Department> list = new ArrayList<Department>();
-			
-			while(rs.next()){
-				list.add(this.loadObject(rs));
+		// Utilizando o método de tryResourceClose para minimizar o código e garantir o fechamento das conexões
+        // Fonte: https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
+		String query = "SELECT department.*, campus.name AS campusName " +
+					"FROM department "+
+					"INNER JOIN campus ON campus.idCampus=department.idCampus " +
+					"WHERE department.idCampus = ? " + (onlyActive ? " AND department.active=1" : "") + " ORDER BY department.name";
+		try (Connection conn = ConnectionDAO.getInstance().getConnection();
+				PreparedStatement stmt = conn.prepareStatement(query);) {
+				// Passando para Statement o idCampus
+				stmt.setInt(1, idCampus);
+
+			try(ResultSet rs = stmt.executeQuery();){
+				List<Department> list = new ArrayList<Department>();
+				while(rs.next()){
+					list.add(this.loadObject(rs));
+				}
+				return list;
 			}
-			
-			return list;
-		}finally{
-			if((rs != null) && !rs.isClosed())
-				rs.close();
-			if((stmt != null) && !stmt.isClosed())
-				stmt.close();
-			if((conn != null) && !conn.isClosed())
-				conn.close();
 		}
 	}
 	
 	public int save(int idUser, Department department) throws SQLException{
 		boolean insert = (department.getIdDepartment() == 0);
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
+
+		// Colocando INSERT e UPDATE em funções separadas para melhor entendimento do código
+		if (insert) {
+			return insertDepartment(idUser, department);
+		} else {
+			return updateDepartment(idUser, department);
+		}
+	}
+
+	// Criando método privado para UPDATE
+	private int insertDepartment(int idUser, Department department) throws SQLException{
+		String sql = "INSERT INTO department(idCampus, name, logo, active, site, fullName, initials) VALUES(?, ?, ?, ?, ?, ?, ?)";
 		
-		try{
-			conn = ConnectionDAO.getInstance().getConnection();
-			
-			if(insert){
-				stmt = conn.prepareStatement("INSERT INTO department(idCampus, name, logo, active, site, fullName, initials) VALUES(?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-			}else{
-				stmt = conn.prepareStatement("UPDATE department SET idCampus=?, name=?, logo=?, active=?, site=?, fullName=?, initials=? WHERE idDepartment=?");
-			}
-			
+		// Utilizando o método de tryResourceClose para minimizar o código e garantir o fechamento das conexões
+        // Fonte: https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
+		try(Connection conn = ConnectionDAO.getInstance().getConnection();
+				PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);){
 			stmt.setInt(1, department.getCampus().getIdCampus());
 			stmt.setString(2, department.getName());
 			if(department.getLogo() == null){
@@ -131,33 +111,58 @@ public class DepartmentDAO {
 			stmt.setString(5, department.getSite());
 			stmt.setString(6, department.getFullName());
 			stmt.setString(7, department.getInitials());
-			
-			if(!insert){
-				stmt.setInt(8, department.getIdDepartment());
+
+			// Usanddo executeUpdate para garantir o UPDATE
+			// o Método executeUpdate é destinado para INSERT, UPDATE e DELETE
+			int rows = stmt.executeUpdate();
+			if(rows == 0){
+				throw new SQLException("Falha ao fazer update no banco, id não encontrado.");
 			}
-			
-			stmt.execute();
-			
-			if(insert){
-				rs = stmt.getGeneratedKeys();
-				
+
+			try(ResultSet rs = stmt.getGeneratedKeys()) {
 				if(rs.next()){
-					department.setIdDepartment(rs.getInt(1));
+				    department.setIdDepartment(rs.getInt(1));
 				}
 
 				new UpdateEvent(conn).registerInsert(idUser, department);
-			} else {
-				new UpdateEvent(conn).registerUpdate(idUser, department);
+
+				return department.getIdDepartment();
+			}
+		}
+	}
+	
+	// Criando método privado para UPDATE
+	private int updateDepartment(int idUser, Department department) throws SQLException{
+		String sql = "UPDATE department SET idCampus=?, name=?, logo=?, active=?, site=?, fullName=?, initials=? WHERE idDepartment=?";
+
+		// Utilizando o método de tryResourceClose para minimizar o código e garantir o fechamento das conexões
+		// Fonte: https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
+		try(Connection conn = ConnectionDAO.getInstance().getConnection();
+				PreparedStatement stmt = conn.prepareStatement(sql);){
+			stmt.setInt(1, department.getCampus().getIdCampus());
+			stmt.setString(2, department.getName());
+			if(department.getLogo() == null){
+				stmt.setNull(3, Types.BINARY);
+			}else{
+				stmt.setBytes(3, department.getLogo());	
+			}
+			stmt.setInt(4, department.isActive() ? 1 : 0);
+			stmt.setString(5, department.getSite());
+			stmt.setString(6, department.getFullName());
+			stmt.setString(7, department.getInitials());
+			stmt.setInt(8, department.getIdDepartment());
+			
+
+			// Usanddo executeUpdate para garantir o UPDATE
+			// o Método executeUpdate é destinado para INSERT, UPDATE e DELETE
+			int rows = stmt.executeUpdate();
+			if(rows == 0){
+				throw new SQLException("Falha ao fazer update no banco, id não encontrado.");
 			}
 			
+			new UpdateEvent(conn).registerUpdate(idUser, department);
+			
 			return department.getIdDepartment();
-		}finally{
-			if((rs != null) && !rs.isClosed())
-				rs.close();
-			if((stmt != null) && !stmt.isClosed())
-				stmt.close();
-			if((conn != null) && !conn.isClosed())
-				conn.close();
 		}
 	}
 	
