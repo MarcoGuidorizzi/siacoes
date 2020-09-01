@@ -825,7 +825,8 @@ CREATE TABLE eventlog (
     idobject integer NOT NULL,
     date timestamp NOT NULL,
     data bytea NOT NULL,
-    PRIMARY KEY (ideventlog),
+    --PRIMARY KEY (ideventlog), -- A chave primária deve ser idlog ao invés de ideventlog
+    PRIMARY KEY (idlog),
     CONSTRAINT fk_eventlog_user FOREIGN KEY (iduser) REFERENCES "user" (iduser) ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 CREATE INDEX fk_eventlog_user_idx ON eventlog (iduser);
