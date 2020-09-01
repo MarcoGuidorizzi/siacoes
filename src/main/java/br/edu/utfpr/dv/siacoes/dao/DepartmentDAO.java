@@ -92,7 +92,7 @@ public class DepartmentDAO {
 		}
 	}
 
-	// Criando método privado para UPDATE
+	// Criando método privado para INSERT
 	private int insertDepartment(int idUser, Department department) throws SQLException{
 		String sql = "INSERT INTO department(idCampus, name, logo, active, site, fullName, initials) VALUES(?, ?, ?, ?, ?, ?, ?)";
 		
@@ -112,11 +112,11 @@ public class DepartmentDAO {
 			stmt.setString(6, department.getFullName());
 			stmt.setString(7, department.getInitials());
 
-			// Usanddo executeUpdate para garantir o UPDATE
+			// Usanddo executeUpdate para garantir o INSERT
 			// o Método executeUpdate é destinado para INSERT, UPDATE e DELETE
 			int rows = stmt.executeUpdate();
 			if(rows == 0){
-				throw new SQLException("Falha ao fazer update no banco, id não encontrado.");
+				throw new SQLException("Falha ao inserir no banco.");
 			}
 
 			try(ResultSet rs = stmt.getGeneratedKeys()) {
