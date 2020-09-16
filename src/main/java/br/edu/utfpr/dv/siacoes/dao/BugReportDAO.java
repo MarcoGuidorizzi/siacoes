@@ -14,8 +14,14 @@ import br.edu.utfpr.dv.siacoes.model.BugReport.BugStatus;
 import br.edu.utfpr.dv.siacoes.model.Module;
 import br.edu.utfpr.dv.siacoes.model.User;
 
-public class BugReportDAO {
+public class BugReportDAO extends Template {
 
+	@Override
+	void functions(){
+		super.functions();
+	}
+
+	@Override
     public BugReport findById(int id) throws SQLException{
 
 		// Utilizando o método de tryResourceClose para minimizar o código e garantir o fechamento das conexões
@@ -38,6 +44,7 @@ public class BugReportDAO {
 		}
 	}
 	
+	@Override
 	public List<BugReport> listAll() throws SQLException{
 
         // Utilizando o método de tryResourceClose para minimizar o código e garantir o fechamento das conexões
@@ -58,6 +65,7 @@ public class BugReportDAO {
 		}
 	}
 	
+	@Override
 	public int save(BugReport bug) throws SQLException{
 		boolean insert = (bug.getIdBugReport() == 0);
 

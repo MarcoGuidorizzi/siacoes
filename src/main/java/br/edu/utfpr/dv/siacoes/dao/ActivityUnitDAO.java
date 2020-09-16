@@ -11,8 +11,14 @@ import java.util.List;
 import br.edu.utfpr.dv.siacoes.log.UpdateEvent;
 import br.edu.utfpr.dv.siacoes.model.ActivityUnit;
 
-public class ActivityUnitDAO {
+public class ActivityUnitDAO extends Template {
+
+	@Override
+	void functions(){
+		super.functions();
+	}
 	
+	@Override
 	public List<ActivityUnit> listAll() throws SQLException{
         // Utilizando o método de tryResourceClose para minimizar o código e garantir o fechamento das conexões
         // Fonte: https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
@@ -32,6 +38,7 @@ public class ActivityUnitDAO {
 		}
 	}
 	
+	@Override
 	public ActivityUnit findById(int id) throws SQLException{
         // Utilizando o método de tryResourceClose para minimizar o código e garantir o fechamento das conexões
         // Fonte: https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
@@ -51,6 +58,7 @@ public class ActivityUnitDAO {
 		}
 	}
 	
+	@Override
 	public int save(int idUser, ActivityUnit unit) throws SQLException {
 		boolean insert = (unit.getIdActivityUnit() == 0);
 

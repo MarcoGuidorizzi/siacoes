@@ -12,8 +12,14 @@ import java.util.List;
 import br.edu.utfpr.dv.siacoes.log.UpdateEvent;
 import br.edu.utfpr.dv.siacoes.model.Department;
 
-public class DepartmentDAO {
+public class DepartmentDAO extends Template {
 
+	@Override
+	void functions(){
+		super.functions();
+	}
+
+	@Override
 	public List<Department> listAll(boolean onlyActive) throws SQLException{
 
 		// Utilizando o método de tryResourceClose para minimizar o código e garantir o fechamento das conexões
@@ -35,6 +41,7 @@ public class DepartmentDAO {
 		}
 	}
 
+	@Override
 	public Department findById(int id) throws SQLException{
 
 		// Utilizando o método de tryResourceClose para minimizar o código e garantir o fechamento das conexões
@@ -81,6 +88,7 @@ public class DepartmentDAO {
 		}
 	}
 	
+	@Override
 	public int save(int idUser, Department department) throws SQLException{
 		boolean insert = (department.getIdDepartment() == 0);
 
