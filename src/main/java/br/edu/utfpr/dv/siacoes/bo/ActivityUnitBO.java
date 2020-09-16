@@ -1,4 +1,4 @@
-﻿package br.edu.utfpr.dv.siacoes.bo;
+package br.edu.utfpr.dv.siacoes.bo;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -8,13 +8,14 @@ import java.util.logging.Logger;
 import br.edu.utfpr.dv.siacoes.dao.ActivityUnitDAO;
 import br.edu.utfpr.dv.siacoes.model.ActivityUnit;
 
-public class ActivityUnitBO {
+public abstract class ActivityUnitBO {
+	public abstract List<ActivityUnit> listAllDAO() throws SQLException;
+	public abstract ActivityUnit findByIdDAO(int id) throws SQLException;
+	public abstract int saveDAO(int idUser, ActivityUnit unit) throws SQLException;
 	
 	public List<ActivityUnit> listAll() throws Exception{
 		try{
-			ActivityUnitDAO dao = new ActivityUnitDAO();
-			
-			return dao.listAll();
+			return listAllDAO();
 		}catch(SQLException e){
 			Logger.getGlobal().log(Level.SEVERE, e.getMessage(), e);
 			
@@ -24,9 +25,7 @@ public class ActivityUnitBO {
 	
 	public ActivityUnit findById(int id) throws Exception{
 		try{
-			ActivityUnitDAO dao = new ActivityUnitDAO();
-			
-			return dao.findById(id);
+			return findByIdDAO(id);
 		}catch(SQLException e){
 			Logger.getGlobal().log(Level.SEVERE, e.getMessage(), e);
 			
@@ -46,9 +45,7 @@ public class ActivityUnitBO {
 		}
 		
 		try{
-			ActivityUnitDAO dao = new ActivityUnitDAO();
-			
-			return dao.save(idUser, unit);
+			return saveDAO(idUser, unit);
 		}catch(SQLException e){
 			Logger.getGlobal().log(Level.SEVERE, e.getMessage(), e);
 			

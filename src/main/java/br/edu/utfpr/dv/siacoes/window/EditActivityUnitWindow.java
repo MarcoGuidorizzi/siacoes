@@ -8,6 +8,7 @@ import com.vaadin.ui.TextField;
 
 import br.edu.utfpr.dv.siacoes.Session;
 import br.edu.utfpr.dv.siacoes.bo.ActivityUnitBO;
+import br.edu.utfpr.dv.siacoes.dao.ActivityUnitDAO;
 import br.edu.utfpr.dv.siacoes.model.ActivityUnit;
 import br.edu.utfpr.dv.siacoes.view.ListView;
 
@@ -56,7 +57,7 @@ public class EditActivityUnitWindow extends EditWindow {
 	@Override
 	public void save() {
 		try {
-			ActivityUnitBO bo = new ActivityUnitBO();
+			ActivityUnitBO bo = new ActivityUnitDAO();
 			
 			this.unit.setDescription(this.textDescription.getValue());
 			this.unit.setFillAmount(this.checkFillAmount.getValue());

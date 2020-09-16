@@ -1,4 +1,4 @@
-﻿package br.edu.utfpr.dv.siacoes.view;
+package br.edu.utfpr.dv.siacoes.view;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -8,6 +8,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 
 import br.edu.utfpr.dv.siacoes.bo.ActivityUnitBO;
+import br.edu.utfpr.dv.siacoes.dao.ActivityUnitDAO;
 import br.edu.utfpr.dv.siacoes.model.ActivityUnit;
 import br.edu.utfpr.dv.siacoes.model.Module.SystemModule;
 import br.edu.utfpr.dv.siacoes.model.User.UserProfile;
@@ -36,7 +37,7 @@ public class ActivityUnitView extends ListView {
 		this.getGrid().getColumns().get(1).setWidth(150);
 		
 		try{
-			ActivityUnitBO bo = new ActivityUnitBO();
+			ActivityUnitBO bo = new ActivityUnitDAO();
 			List<ActivityUnit> list = bo.listAll();
 			
 			for(ActivityUnit unit : list){
@@ -58,7 +59,7 @@ public class ActivityUnitView extends ListView {
 	@Override
 	public void editClick(Object id) {
 		try{
-			ActivityUnitBO bo = new ActivityUnitBO();
+			ActivityUnitBO bo = new ActivityUnitDAO();
 			ActivityUnit unit = bo.findById((int)id);
 			
 			UI.getCurrent().addWindow(new EditActivityUnitWindow(unit, this));
