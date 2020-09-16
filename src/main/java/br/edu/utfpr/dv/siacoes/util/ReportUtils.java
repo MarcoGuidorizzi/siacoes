@@ -20,6 +20,7 @@ import com.vaadin.ui.Button;
 
 import br.edu.utfpr.dv.siacoes.bo.CampusBO;
 import br.edu.utfpr.dv.siacoes.bo.DepartmentBO;
+import br.edu.utfpr.dv.siacoes.dao.DepartmentDAO;
 import br.edu.utfpr.dv.siacoes.model.Campus;
 import br.edu.utfpr.dv.siacoes.model.Department;
 import net.sf.jasperreports.engine.JRException;
@@ -199,7 +200,7 @@ public class ReportUtils {
 		}
         
         try{
-        	DepartmentBO bo = new DepartmentBO();
+        	DepartmentBO bo = new DepartmentDAO();
         	Department d = bo.findById(idDepartment);
         	
         	department = d.getFullName();

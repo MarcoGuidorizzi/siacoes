@@ -12,9 +12,9 @@ import java.util.List;
 import br.edu.utfpr.dv.siacoes.log.UpdateEvent;
 import br.edu.utfpr.dv.siacoes.model.Department;
 
-public class DepartmentDAO {
+public class DepartmentDAO extends DepartmentBO{
 
-	public List<Department> listAll(boolean onlyActive) throws SQLException{
+	public List<Department> listAllDAO(boolean onlyActive) throws SQLException{
 
 		// Utilizando o método de tryResourceClose para minimizar o código e garantir o fechamento das conexões
         // Fonte: https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
@@ -58,7 +58,7 @@ public class DepartmentDAO {
 		}
 	}
 	
-	public List<Department> listByCampus(int idCampus, boolean onlyActive) throws SQLException{
+	public List<Department> listByCampusDAO(int idCampus, boolean onlyActive) throws SQLException{
 		
 		// Utilizando o método de tryResourceClose para minimizar o código e garantir o fechamento das conexões
         // Fonte: https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
@@ -81,7 +81,7 @@ public class DepartmentDAO {
 		}
 	}
 	
-	public int save(int idUser, Department department) throws SQLException{
+	public int saveDAO(int idUser, Department department) throws SQLException{
 		boolean insert = (department.getIdDepartment() == 0);
 
 		// Colocando INSERT e UPDATE em funções separadas para melhor entendimento do código

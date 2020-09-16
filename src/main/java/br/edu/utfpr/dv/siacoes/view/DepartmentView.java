@@ -8,6 +8,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 
 import br.edu.utfpr.dv.siacoes.bo.DepartmentBO;
+import br.edu.utfpr.dv.siacoes.dao.DepartmentDAO;
 import br.edu.utfpr.dv.siacoes.components.CampusComboBox;
 import br.edu.utfpr.dv.siacoes.model.Department;
 import br.edu.utfpr.dv.siacoes.model.Module.SystemModule;
@@ -43,7 +44,7 @@ public class DepartmentView extends ListView {
 		this.getGrid().getColumns().get(1).setWidth(100);
 		
 		try{
-			DepartmentBO bo = new DepartmentBO();
+			DepartmentBO bo = new DepartmentDAO();
 			List<Department> list = bo.listByCampus((this.comboCampus.getCampus() == null ? 0 : this.comboCampus.getCampus().getIdCampus()), false);
 			
 			for(Department d : list){
@@ -69,7 +70,7 @@ public class DepartmentView extends ListView {
 	@Override
 	public void editClick(Object id) {
 		try{
-			DepartmentBO bo = new DepartmentBO();
+			DepartmentBO bo = new DepartmentDAO();
 			Department department = bo.findById((int)id);
 			
 			UI.getCurrent().addWindow(new EditDepartmentWindow(department, this));

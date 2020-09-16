@@ -19,6 +19,7 @@ import com.vaadin.ui.VerticalLayout;
 import br.edu.utfpr.dv.siacoes.Session;
 import br.edu.utfpr.dv.siacoes.bo.CampusBO;
 import br.edu.utfpr.dv.siacoes.bo.DepartmentBO;
+import br.edu.utfpr.dv.siacoes.dao.DepartmentDAO;
 import br.edu.utfpr.dv.siacoes.model.Campus;
 import br.edu.utfpr.dv.siacoes.model.Department;
 import br.edu.utfpr.dv.siacoes.model.Module.SystemModule;
@@ -67,7 +68,7 @@ public class MainView extends BasicView {
     
     private void loadImages(){
     	try{
-    		DepartmentBO dbo = new DepartmentBO();
+    		DepartmentBO dbo = new DepartmentDAO();
     		Department department = dbo.findById(Session.getSelectedDepartment().getDepartment().getIdDepartment());
     		
     		this.logoES.setResource(new ExternalResource(department.getSite()));
