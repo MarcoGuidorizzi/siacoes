@@ -1,19 +1,23 @@
-package br.edu.utfpr.dv.siacoes.bo;
+﻿package br.edu.utfpr.dv.siacoes.bo;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import br.edu.utfpr.dv.siacoes.dao.ActivityUnitDAO;
 import br.edu.utfpr.dv.siacoes.dao.DepartmentDAO;
+import br.edu.utfpr.dv.siacoes.dao.TemplateMethod;
+import br.edu.utfpr.dv.siacoes.model.ActivityUnit;
 import br.edu.utfpr.dv.siacoes.model.Department;
 
 public class DepartmentBO {
 	
 	public Department findById(int id) throws Exception{
 		try{
-			DepartmentDAO dao = new DepartmentDAO();
+			TemplateMethod<Department> tm = new DepartmentDAO();
 			
-			return dao.findById(id);
+			return tm.findById(id);
 		}catch(Exception e){
 			Logger.getGlobal().log(Level.SEVERE, e.getMessage(), e);
 			
